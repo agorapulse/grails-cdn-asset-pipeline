@@ -6,7 +6,7 @@ import com.amazonaws.services.s3.model.ObjectListing
 includeTargets << grailsScript("_GrailsInit")
 includeTargets << new File(assetPipelinePluginDir, "scripts/_AssetCompile.groovy")
 
-target(loadConfig: "Load S3 resources config") {
+target(loadConfig: "Load S3 assets config") {
     depends(compile, parseArguments)
 
     if (argsMap['help']) {
@@ -34,6 +34,8 @@ target(loadConfig: "Load S3 resources config") {
             expirationDate = expires
         } else if (expires instanceof Integer) {
             expirationDate = new Date() + expires
+        } else if (expires instanceof String && expires.isNumber()) {
+            expirationDate = new Date() + expires.toInteger()
         }
     }
 

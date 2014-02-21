@@ -9,12 +9,9 @@ import java.text.SimpleDateFormat
 includeTargets << new File("${s3AssetPipelinePluginDir}/scripts/_AssetS3.groovy")
 
 USAGE = """
-    asset-s3-push [--update] [--bucket=BUCKET] [--region=REGION] [--access-key=ACCESS_KEY] [--secret-key=SECRET_KEY] [--prefix=PREFIX]
+    asset-s3-push [--bucket=BUCKET] [--expires=EXPIRES] [--region=REGION] [--access-key=ACCESS_KEY] [--secret-key=SECRET_KEY] [--prefix=PREFIX]
 
 where
-    --update        = Upload all resources even if they already exists.
-                    (default: false, it only uploads new resources, not yet uploaded)
-
     BUCKET          = S3 bucket name.
                     (default: grails.assets.s3.bucket
                         or grails.plugin.awssdk.s3.bucket
@@ -35,6 +32,9 @@ where
                         or grails.plugin.awssdk.s3.secretKey
                         or grails.plugin.awssdk.secretKey)
 
+    EXPIRES         = Expires value in days (to add 'Cache-Control' and 'Expires' metadata).
+                    (default: grails.assets.s3.expires)
+
     PREFIX          = S3 key prefix
                     (default: grails.assets.s3.prefix)
 """
@@ -43,15 +43,15 @@ target(assetS3Push: "Upload static assets to an AWS S3 bucket") {
     loadConfig() // Load config and parse arguments
 
     if (!accessKey) {
-        println "Access key is required, use 'grails help asset-s3-push' to show usage."
+        event("StatusError", ["Access key is required, use 'grails help asset-s3-push' to show usage."])
         exit 1
     }
     if (!secretKey) {
-        println "Secret key is required, use 'grails help asset-s3-push' to show usage."
+        event("StatusError", ["Secret key is required, use 'grails help asset-s3-push' to show usage."])
         exit 1
     }
     if (!bucket) {
-        println "Bucket is required, use 'grails help asset-s3-push' to show usage."
+        event("StatusError", ["Bucket is required, use 'grails help asset-s3-push' to show usage."])
         exit 1
     }
 
@@ -59,7 +59,7 @@ target(assetS3Push: "Upload static assets to an AWS S3 bucket") {
     update = argsMap['update'] ? true : false
 
     if (expirationDate) {
-        println "Expiration date set to $expirationDate"
+        event("StatusUpdate", ["Expiration date set to $expirationDate"])
     }
 
     loadS3Client() // Load s3Client
@@ -71,16 +71,17 @@ target(assetS3Push: "Upload static assets to an AWS S3 bucket") {
     def assetPath = 'target/assets'
     def assetDir = new File(assetPath)
     if (!assetDir.exists()) {
-        println "Could not push assets, target/assets directory not found"
+        event("StatusError", ["Could not push assets, target/assets directory not found"])
     } else {
         List list = []
         assetDir.eachFileRecurse (FileType.FILES) { file ->
             list << file
         }
 
-        list.each { File file ->
+        int total = list.size()
+        list.eachWithIndex { File file, index ->
             String s3Key = prefix + file.path.replace("${assetPath}/", '')
-            println "Uploading $s3Key ..."
+            event("StatusUpdate", ["Uploading File ${index} of ${total} -  $s3Key"])
             s3Client.putObject(
                     new PutObjectRequest(bucket, s3Key, file)
                             .withCannedAcl(CannedAccessControlList.PublicRead)
@@ -90,12 +91,7 @@ target(assetS3Push: "Upload static assets to an AWS S3 bucket") {
         }
     }
 
-    if (uploadCount) {
-        println "S3 resources push complete: $uploadCount resources uploaded to bucket ($bucket)"
-    } else {
-        println "S3 resources push complete: nothing to push, all resources are already uploaded to bucket ($bucket)"
-    }
-
+    event("StatusFinal", ["Assets push to S3 complete: $uploadCount assets uploaded to bucket '$bucket'"])
 }
 
 setDefaultTarget(assetS3Push)
@@ -108,6 +104,7 @@ private ObjectMetadata buildMetaData(String extension, Date expirationDate) {
         DateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US)
         metaData.setHeader("Cache-Control", "PUBLIC, max-age=${(expirationDate.time / 1000).toInteger()}, must-revalidate")
         metaData.setHeader("Expires", httpDateFormat.format(expirationDate))
+        println httpDateFormat.format(expirationDate)
     }
     // Specify content type for web fonts
     switch(extension) {

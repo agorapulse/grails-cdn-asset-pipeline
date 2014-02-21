@@ -1,6 +1,6 @@
 class S3AssetPipelineGrailsPlugin {
 
-    def version = "0.1-SNAPSHOT"
+    def version = "0.1"
     def grailsVersion = "2.0 > *"
     def dependsOn = ['asset-pipeline': '1.5 > *']
     def loadAfter = ['asset-pipeline']

@@ -44,16 +44,16 @@ target(main: "Add a CORS GET rule for a given origin and an AWS S3 bucket") {
     String origin = argsMap['origin'] ?: ''
     String ruleId = argsMap['rule-id'] ?: 'GetRule'
     if (!origin) {
-        println "Origin is a required argument, use 'grails help asset-s3-bucket-allow' to show usage."
+        event("StatusError", ["Origin is a required argument, use 'grails help asset-s3-bucket-allow' to show usage."])
         exit 1
     }
 
     if (!bucket) {
-        println "Bucket is a required argument, use 'grails help asset-s3-bucket-allow' to show usage."
+        event("StatusError", ["Bucket is a required argument, use 'grails help asset-s3-bucket-allow' to show usage."])
         exit 1
     }
 
-    println "Checking existing CORS rules for S3 bucket ($bucket)....."
+    event("StatusUpdate", ["Checking existing CORS rules for S3 bucket ($bucket)....."])
     loadS3Client()
 
     CORSRule rule
@@ -68,23 +68,22 @@ target(main: "Add a CORS GET rule for a given origin and an AWS S3 bucket") {
             //println "AllowedHeaders: $it.allowedHeaders"
             //println "ExposeHeader: $it.exposedHeaders"
         }
-        println "--"
         rules = bucketConfig.rules
         rule = rules.find { it.id == ruleId } //{ origin in it.allowedOrigins && GET in it.allowedMethods }
     } else {
         bucketConfig = new BucketCrossOriginConfiguration()
     }
     if (!rule) {
-        println "Adding CORS GET rule....."
+        event("StatusUpdate", ["Adding CORS GET rule....."])
         rules.add(new CORSRule()
                 .withId(ruleId)
                 .withAllowedMethods([GET])
                 .withAllowedOrigins([origin]))
         bucketConfig.setRules(rules)
         s3Client.setBucketCrossOriginConfiguration(bucket, bucketConfig)
-        println "CORS GET rule successfully added for origin '$origin' (rule ID: $rule.id)"
+        event("StatusFinal", ["CORS GET rule successfully added for origin '$origin' (rule ID: $rule.id)"])
     } else {
-        println "CORS GET rule already exists for origin '$origin' (rule ID: $rule.id)"
+        event("StatusFinal", ["CORS GET rule already exists for origin '$origin' (rule ID: $rule.id)"])
     }
 }
 

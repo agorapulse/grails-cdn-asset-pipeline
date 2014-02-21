@@ -59,7 +59,7 @@ grails {
 }
 ```
 
-**prefix** config param is not required, but it is useful to version your assets automatically.
+**prefix** config param is not required, but it is useful to version your assets automatically, so that you don't have to handle cache invalidation.
 
 You should set a pretty big **expires** value (to add **Cache-Control** and **Expires** metadata), so that browsers cache assets locally.
 

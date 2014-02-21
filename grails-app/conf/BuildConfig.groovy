@@ -17,6 +17,6 @@ grails.project.dependency.resolution = {
             export = false
         }
         compile ':aws-sdk:1.7.1'
-        compile ':asset-pipeline:1.5.7'
+        compile ':asset-pipeline:1.5.8'
     }
 }

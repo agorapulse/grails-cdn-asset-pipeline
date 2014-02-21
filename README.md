@@ -9,8 +9,9 @@ The S3 Plugin allows you to push [Grails](http://grails.org) app assets to [Amaz
 - *great for your users*: faster browser page rendering thanks to CDN,
 - *great for your servers*: less static requests to handle = increased load capabilities.
 
-Undercover, it uses [Asset Pipeline](http://grails.org/plugin/asset-pipeline) Grails Plugin to precompile assets and [AWS SDK](http://grails.org/plugin/aws-sdk) Grails Plugin to upload the files to [Amazon S3](aws.amazon.com/s3/).
-It adds two new CLI scripts:
+Undercover, it uses [Asset Pipeline](http://grails.org/plugin/asset-pipeline) Grails Plugin to precompile assets and [AWS SDK](http://grails.org/plugin/aws-sdk) Grails Plugin to upload files to [Amazon S3](aws.amazon.com/s3/).
+
+It adds two new [Grails](http://grails.org) CLI scripts:
 
 - *asset-s3-push* to upload assets to a bucket,
 - *asset-s3-bucket-allow* to add a CORS GetRule to a bucket.
@@ -39,6 +40,8 @@ grails.project.dependency.resolution = {
 
 # Config
 
+You can add your config in **Config.groovy** but it is not required, all parameters can be passed as arguments to *asset-s3-push*.
+
 ```groovy
 def appName = grails.util.Metadata.current.'app.name'
 def appVersion = grails.util.Metadata.current.'app.version'
@@ -57,12 +60,15 @@ grails {
 ```
 
 **prefix** config param is not required, but it is useful to version your assets automatically.
-You should set a pretty big **expires** value (to add 'Cache-Control' and 'Expires' metadata), so that browsers cache assets locally.
+
+You should set a pretty big **expires** value (to add **Cache-Control** and **Expires** metadata), so that browsers cache assets locally.
 
 Note: never use your AWS root user access keys, you should create a specific IAM user with the corresponding S3 bucket permissions.
 
 
 # Usage
+
+## Pushing your assets to S3 bucket
 
 Add this command to your build process (usually before war generation and deployment).
 
@@ -79,9 +85,11 @@ Then, in your [Asset Pipeline](http://grails.org/plugin/asset-pipeline) config, 
 grails.assets.url = "https://s3.amazonaws.com/my-bucket/assets/${appName}-${appVersion}"
 ```
 
-# CORS bucket configuration
+## Allowing your domain with a CORS bucket rule
 
-When you create your bucket on S3, you might need to add a [CORS rule](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html) (Cross-Origin Resource Sharing), we have added a command that will automatically do it.
+When you create your bucket on S3, you might need to add a [CORS rule](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html) (Cross-Origin Resource Sharing).
+
+Here is a command that will automatically do it for you!
 
 ```groovy
 // If all the settings are defined in your Config.groovy

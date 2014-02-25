@@ -16,6 +16,8 @@ It adds two new [Grails](http://grails.org) CLI scripts:
 - *asset-karman-push* to upload assets to a bucket,
 - *asset-karman-directory-cors* to add a CORS GetRule to a directory (ex.: S3bucket).
 
+Note: for this initial release, only *S3* provider is supported.
+
 # Installation
 
 Declare the plugin dependency in the BuildConfig.groovvy file, as shown here:
@@ -69,7 +71,7 @@ Note: for S3 provider, never use your AWS root user access keys, you should crea
 
 # Usage
 
-## Pushing your assets to S3 bucket
+## Pushing your assets to Cloud Storage Service
 
 Add this command to your build process (usually before war generation and deployment).
 
@@ -86,7 +88,7 @@ Then, in your [Asset Pipeline](http://grails.org/plugin/asset-pipeline) config, 
 grails.assets.url = "https://s3.amazonaws.com/my-bucket/assets/${appName}-${appVersion}"
 ```
 
-## Allowing your domain with a CORS bucket rule
+## Allowing your domain with a CORS rule
 
 When you create your bucket on S3, you might need to add a [CORS rule](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html) (Cross-Origin Resource Sharing).
 

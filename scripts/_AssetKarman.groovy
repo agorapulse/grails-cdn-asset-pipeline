@@ -1,5 +1,3 @@
-import com.bertramlabs.plugins.karman.aws.S3StorageProvider
-
 includeTargets << grailsScript("_GrailsInit")
 includeTargets << new File(assetPipelinePluginDir, "scripts/_AssetCompile.groovy")
 
@@ -49,7 +47,6 @@ target(loadProvider: "Load Karman provider") {
     // Load provider
     try {
         String className = "com.bertramlabs.plugins.karman.${providerName == 'S3' ? 'aws' : providerName.toLowerCase()}.${providerName}StorageProvider"
-        classLoader.loadClass(className)
         provider = Class.forName(className, false, Thread.currentThread().contextClassLoader).newInstance(
                 accessKey: accessKey,
                 secretKey: secretKey,

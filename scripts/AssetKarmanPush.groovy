@@ -77,12 +77,10 @@ target(assetKarmanPush: "Upload static assets to Karman directory") {
         list.eachWithIndex { File file, index ->
             String name = prefix + file.path.replace("${assetPath}/", '')
             event("StatusUpdate", ["Uploading File ${index} of ${total} -  $name"])
-            println "Uploading File ${index} of ${total} -  $name"
             def cloudFile = provider[directory][name]
             if (expirationDate) {
-                DateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US)
                 cloudFile.setMetaAttribute(Headers.CACHE_CONTROL, "PUBLIC, max-age=${(expirationDate.time / 1000).toInteger()}, must-revalidate")
-                cloudFile.setMetaAttribute(Headers.EXPIRES, httpDateFormat.format(expirationDate))
+                cloudFile.setMetaAttribute(Headers.EXPIRES, expirationDate)
             }
             // Specify content type for web fonts
             Map contentTypes = [

@@ -13,7 +13,7 @@ Undercover, it uses [Asset Pipeline](http://grails.org/plugin/asset-pipeline) Gr
 
 It adds two new [Grails](http://grails.org) CLI scripts:
 
-- *asset-karman-push* to upload assets to a bucket,
+- *asset-karman-push* to upload assets to a directory (ex.: S3bucket),
 - *asset-karman-directory-cors* to add a CORS GetRule to a directory (ex.: S3bucket).
 
 Note: for this initial release, only *S3* provider is supported.
@@ -71,7 +71,7 @@ Note: for S3 provider, never use your AWS root user access keys, you should crea
 
 # Usage
 
-## Pushing your assets to Cloud Storage Service
+## Pushing your assets to a Cloud Storage Service
 
 Add this command to your build process (usually before war generation and deployment).
 
@@ -80,12 +80,6 @@ Add this command to your build process (usually before war generation and deploy
 grails asset-karman-push
 // Or
 grails asset-karman-push --provider=S3 --directory=my-bucket --prefix=some-prefix --expires=365 --region=eu-west-1 --access-key=$MY_S3_ACCESS_KEY --secret-key=$MY_S3_SECRET_KEY
-```
-
-Then, in your [Asset Pipeline](http://grails.org/plugin/asset-pipeline) config, define the assets S3 URL or CloudFront CDN URL
-
-```groovy
-grails.assets.url = "https://s3.amazonaws.com/my-bucket/assets/${appName}-${appVersion}"
 ```
 
 ## Allowing your domain with a CORS rule
@@ -99,6 +93,14 @@ Here is a command that will automatically do it for you!
 grails asset-karman-directory-cors --origin=*.mydomain.com
 // Or
 grails asset-karman-directory-cors --origin=*.mydomain.com --provider=S3 --directory=my-bucket --region=eu-west-1 --access-key=$MY_S3_ACCESS_KEY --secret-key=$MY_S3_SECRET_KEY
+```
+
+## Using your CDN-based assets
+
+In your [Asset Pipeline](http://grails.org/plugin/asset-pipeline) config, add your CDN URL (including your app prefix)
+
+```groovy
+grails.assets.url = "https://s3.amazonaws.com/my-bucket/assets/${appName}-${appVersion}"
 ```
 
 # Latest releases

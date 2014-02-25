@@ -107,33 +107,3 @@ target(assetKarmanPush: "Upload static assets to Karman directory") {
 }
 
 setDefaultTarget(assetKarmanPush)
-
-// PRIVATE
-
-/*private ObjectMetadata buildMetaData(String extension, Date expirationDate) {
-    def metaData = new ObjectMetadata()
-    if (expirationDate) {
-        DateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US)
-        metaData.setHeader("Cache-Control", "PUBLIC, max-age=${(expirationDate.time / 1000).toInteger()}, must-revalidate")
-        metaData.setHeader("Expires", httpDateFormat.format(expirationDate))
-    }
-    // Specify content type for web fonts
-    switch(extension) {
-        case 'eot':
-            metaData.setContentType('application/vnd.ms-fontobject')
-            break
-        case 'otf':
-            metaData.setContentType('font/opentype')
-            break
-        case 'svg':
-            metaData.setContentType('image/svg+xml')
-            break
-        case 'ttf':
-            metaData.setContentType('application/x-font-ttf')
-            break
-        case 'woff':
-            metaData.setContentType('application/x-font-woff')
-            break
-    }
-    return metaData
-}*/

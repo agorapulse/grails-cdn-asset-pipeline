@@ -48,7 +48,9 @@ target(loadProvider: "Load Karman provider") {
 
     // Load provider
     try {
-        provider = Class.forName("com.bertramlabs.plugins.karman.${providerName == 'S3' ? 'aws' : providerName.toLowerCase()}.${providerName}StorageProvider", false, Thread.currentThread().contextClassLoader).newInstance(
+        String className = "com.bertramlabs.plugins.karman.${providerName == 'S3' ? 'aws' : providerName.toLowerCase()}.${providerName}StorageProvider"
+        classLoader.loadClass(className)
+        provider = Class.forName(className, false, Thread.currentThread().contextClassLoader).newInstance(
                 accessKey: accessKey,
                 secretKey: secretKey,
                 region: region

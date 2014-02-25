@@ -4,17 +4,20 @@ Karman Asset Pipeline Grails Plugin
 
 # Introduction
 
-The Karman Plugin allows you to push [Grails](http://grails.org) app assets to Cloud Storage Services, in order to use a CDN to serve all your [Grails](http://grails.org) app static assets:
+The Karman Asset Pipeline Plugin provides Gant scripts to be able to automatically upload [Grails](http://grails.org) app static assets to CDNs.
+Those scripts can easily be integrated to a build pipeline for continuous delivery/deployment.
+
+You should always use a CDN to host all your app static assets:
 
 - *great for your users*: faster browser page rendering thanks to CDN,
 - *great for your servers*: less static requests to handle = increased load capabilities.
 
-Undercover, it uses [Asset Pipeline](http://grails.org/plugin/asset-pipeline) Grails Plugin to precompile assets and [Karman](http://grails.org/plugin/karman) Grails Plugin to upload files to CDNs.
+Undercover, it uses [Asset Pipeline](http://grails.org/plugin/asset-pipeline) Grails Plugin to precompile assets and [Karman](http://grails.org/plugin/karman) Grails Plugin to upload files to various Cloud Storage Services.
 
-It adds two new [Grails](http://grails.org) CLI scripts:
+It adds two [Grails](http://grails.org) Gant scripts:
 
-- *asset-karman-push* to upload assets to a directory (ex.: S3bucket),
-- *asset-karman-directory-cors* to add a CORS GetRule to a directory (ex.: S3bucket).
+- *asset-karman-push* to upload assets to a CDN directory/bucket,
+- *asset-karman-directory-cors* to add a CORS GetRule to a directory/bucket.
 
 Note: for this initial release, only *S3* provider is supported.
 

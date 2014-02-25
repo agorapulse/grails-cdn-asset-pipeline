@@ -13,10 +13,12 @@ grails.project.dependency.resolution = {
     dependencies {
     }
     plugins {
-        build(":release:3.0.1") {
+        build ':tomcat:7.0.50.1'
+        build(':release:3.0.1') {
             export = false
         }
-        compile ':aws-sdk:1.7.1'
-        compile ':asset-pipeline:1.5.8'
+
+        compile ':karman-aws:0.2.0-SNAPSHOT'
+        compile ':asset-pipeline:1.6.0'
     }
 }

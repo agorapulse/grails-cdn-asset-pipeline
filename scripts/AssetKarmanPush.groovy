@@ -1,9 +1,6 @@
 import com.amazonaws.services.s3.Headers
 import groovy.io.FileType
 
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-
 includeTargets << new File("${karmanAssetPipelinePluginDir}/scripts/_AssetKarman.groovy")
 
 USAGE = """
@@ -82,8 +79,10 @@ target(assetKarmanPush: "Upload static assets to Karman directory") {
                 cloudFile.setMetaAttribute(Headers.CACHE_CONTROL, "PUBLIC, max-age=${(expirationDate.time / 1000).toInteger()}, must-revalidate")
                 cloudFile.setMetaAttribute(Headers.EXPIRES, expirationDate)
             }
-            // Specify content type for web fonts
+            // Specify some content types for extension not handled by URLConnection.guessContentType
             Map contentTypes = [
+                    css: 'text/css',
+                    js: 'application/javascript',
                     eot: 'application/vnd.ms-fontobject',
                     otf: 'font/opentype',
                     svg: 'image/svg+xml',
@@ -93,6 +92,8 @@ target(assetKarmanPush: "Upload static assets to Karman directory") {
             String extension = file.name.tokenize('.').last()
             if (contentTypes[extension]) {
                 cloudFile.contentType = contentTypes[extension]
+            } else {
+                cloudFile.contentType = URLConnection.guessContentTypeFromName(file.name)
             }
             cloudFile.bytes = file.bytes
             // Upload file

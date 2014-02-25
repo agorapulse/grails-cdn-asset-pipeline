@@ -82,7 +82,9 @@ target(assetKarmanPush: "Upload static assets to Karman directory") {
             // Specify some content types for extension not handled by URLConnection.guessContentType
             Map contentTypes = [
                     css: 'text/css',
+                    gz: 'application/x-compressed',
                     js: 'application/javascript',
+                    pdf: 'application/pdf',
                     eot: 'application/vnd.ms-fontobject',
                     otf: 'font/opentype',
                     svg: 'image/svg+xml',

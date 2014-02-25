@@ -47,36 +47,14 @@ target(loadProvider: "Load Karman provider") {
     depends(loadConfig)
 
     // Load provider
-    //try {
-    if (providerName == 'S3') {
-        provider = new S3StorageProvider(
+    try {
+        provider = Class.forName("com.bertramlabs.plugins.karman.${providerName == 'S3' ? 'aws' : providerName.toLowerCase()}.${providerName}StorageProvider", false, Thread.currentThread().contextClassLoader).newInstance(
                 accessKey: accessKey,
                 secretKey: secretKey,
                 region: region
         )
-    } else {
-        provider = Class.forName("com.bertramlabs.plugins.karman.${providerName.toLowerCase()}.${providerName}StorageProvider", false, Thread.currentThread().contextClassLoader).newInstance(
-                accessKey: accessKey,
-                secretKey: secretKey,
-                region: region
-        )
-    }
-
-    /*} catch (exception) {
-        event("StatusError", ["Provider is invalid, use 'grails help asset-karman-push' to show usage."])
+    } catch (ClassNotFoundException exception) {
+        event("StatusError", ["Provider class not found: ${exception.message}."])
         exit 1
-    }*/
-
-    /*def amazonWebService = appCtx.getBean('amazonWebService')
-    if (accessKey && secretKey) {
-        BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey)
-        s3Client = new AmazonS3Client(credentials)
-        if (region == 'us' || region == 'us-east-1') {
-            s3Client.endpoint = "s3.amazonaws.com"
-        } else {
-            s3Client.endpoint = "s3-${region}.amazonaws.com"
-        }
-    } else {
-        s3Client = region ? amazonWebService.getS3(region) : amazonWebService.s3
-    }*/
+    }
 }

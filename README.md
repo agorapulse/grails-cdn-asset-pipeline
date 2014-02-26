@@ -53,7 +53,7 @@ def appVersion = grails.util.Metadata.current.'app.version'
 
 grails {
     assets {
-        karman {
+        cdn {
             provider = 'S3' // Karman provider
             directory = 'my-bucket'
             accessKey = '{MY_S3_ACCESS_KEY}'
@@ -68,6 +68,8 @@ grails {
 **prefix** config param is not required, but it is useful to version your assets automatically, so that you don't have to handle cache invalidation.
 
 You should set a pretty big **expires** value (to add **Cache-Control** and **Expires** metadata), so that browsers cache assets locally.
+
+For S3 provider, if params are search in `grails.assets.cdn`config, then `grails.plugin.awssdk.s3` and `grails.plugin.awssdk`.
 
 Note: for providers credentials, never use your root user access keys, you should create a specific user (ex. AWS IAM user) with the corresponding bucket permissions.
 

@@ -12,19 +12,26 @@ target(loadConfig: "Load CDN assets config") {
     loadApp()
     configureApp()
 
-    def awsConfig = grailsApp.config.grails.plugin?.awssdk
-    def karmanAssetsConfig = grailsApp.config.grails.assets?.karman
+    def cdnAssetsConfig = grailsApp.config.grails.assets?.cdn
 
     // Parse arguments
-    providerName = argsMap['provider'] ?: karmanAssetsConfig?.provider
-    directory = argsMap['directory'] ?: karmanAssetsConfig?.directory ?: awsConfig?.s3?.bucket ?: awsConfig?.bucket
-    accessKey = argsMap['access-key'] ?: karmanAssetsConfig?.accessKey ?: awsConfig?.s3?.accessKey ?: awsConfig?.accessKey
-    secretKey = argsMap['secret-key'] ?: karmanAssetsConfig?.secretKey ?: awsConfig?.s3?.secretKey ?: awsConfig?.secretKey
-    region = argsMap['region'] ?: karmanAssetsConfig?.region ?: awsConfig?.s3?.region ?: awsConfig?.region ?: ''
+    providerName = argsMap['provider'] ?: cdnAssetsConfig?.provider
+    directory = argsMap['directory'] ?: cdnAssetsConfig?.directory
+    accessKey = argsMap['access-key'] ?: cdnAssetsConfig?.accessKey
+    secretKey = argsMap['secret-key'] ?: cdnAssetsConfig?.secretKey
+    region = argsMap['region'] ?: cdnAssetsConfig?.region
+
+    if (providerName == 'S3') {
+        def awsConfig = grailsApp.config.grails.plugin?.awssdk
+        if (!directory) directory = awsConfig?.s3?.bucket ?: awsConfig?.bucket
+        if (!accessKey) accessKey = awsConfig?.s3?.accessKey ?: awsConfig?.accessKey
+        if (!secretKey) secretKey = awsConfig?.s3?.secretKey ?: awsConfig?.secretKey
+        if (!region) region = awsConfig?.s3?.region ?: awsConfig?.region ?: ''
+    }
 
     // Global expirationDate var
     expirationDate = null
-    def expires = argsMap['expires'] ?: karmanAssetsConfig?.expires ?: awsConfig?.s3?.expires ?: 0
+    def expires = argsMap['expires'] ?: cdnAssetsConfig?.expires ?: 0
     if (expires) {
         if (expires instanceof Date) {
             expirationDate = expires
@@ -36,7 +43,7 @@ target(loadConfig: "Load CDN assets config") {
     }
 
     // Global prefix var
-    prefix = argsMap['prefix'] ?: karmanAssetsConfig.prefix ?: ''
+    prefix = argsMap['prefix'] ?: cdnAssetsConfig.prefix ?: ''
     if (!prefix.endsWith('/')) prefix = "$prefix/"
     if (prefix.startsWith('/')) prefix = prefix.replaceFirst('/', '')
 }

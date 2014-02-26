@@ -1,10 +1,10 @@
 
-Karman Asset Pipeline Grails Plugin
+CDN Asset Pipeline Grails Plugin
 ===============================
 
 # Introduction
 
-The Karman Asset Pipeline Plugin provides Gant scripts to be able to automatically upload [Grails](http://grails.org) app static assets to CDNs.
+The CDN Asset Pipeline Plugin provides Gant scripts to automatically upload [Grails](http://grails.org) app static assets to CDNs.
 Those scripts can easily be integrated to a build pipeline for continuous delivery/deployment.
 
 You should always use a CDN to host all your app static assets:
@@ -16,8 +16,8 @@ Undercover, it uses [Asset Pipeline](http://grails.org/plugin/asset-pipeline) Gr
 
 It adds two [Grails](http://grails.org) Gant scripts:
 
-- *asset-karman-push* to upload assets to a CDN directory/bucket,
-- *asset-karman-directory-cors* to add a CORS GetRule to a directory/bucket.
+- *asset-cdn-push* to upload assets to a CDN directory/bucket,
+- *asset-cdn-cors* to add a CORS GetRule to a directory/bucket.
 
 Note: for this initial release, only *S3* provider is supported.
 
@@ -37,7 +37,7 @@ grails.project.dependency.resolution = {
         }
 		plugins {
 				//here go your plugin dependencies
-				runtime ':karman-asset-pipeline:0.1'
+				runtime ':cdn-asset-pipeline:0.1'
 		}
 }
 ```
@@ -69,7 +69,7 @@ grails {
 
 You should set a pretty big **expires** value (to add **Cache-Control** and **Expires** metadata), so that browsers cache assets locally.
 
-Note: for S3 provider, never use your AWS root user access keys, you should create a specific IAM user with the corresponding S3 bucket permissions.
+Note: for providers credentials, never use your root user access keys, you should create a specific user (ex. AWS IAM user) with the corresponding bucket permissions.
 
 
 # Usage
@@ -80,22 +80,22 @@ Add this command to your build process (usually before war generation and deploy
 
 ```groovy
 // If all the settings are defined in your Config.groovy
-grails asset-karman-push
+grails asset-cdn-push
 // Or
-grails asset-karman-push --provider=S3 --directory=my-bucket --prefix=some-prefix --expires=365 --region=eu-west-1 --access-key=$MY_S3_ACCESS_KEY --secret-key=$MY_S3_SECRET_KEY
+grails asset-cdn-push --provider=S3 --directory=my-bucket --prefix=some-prefix --expires=365 --region=eu-west-1 --access-key=$MY_S3_ACCESS_KEY --secret-key=$MY_S3_SECRET_KEY
 ```
 
 ## Allowing your domain with a CORS rule
 
-When you create your bucket on S3, you might need to add a [CORS rule](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html) (Cross-Origin Resource Sharing).
+When you create your bucket on your Cloud Storage Service, you might need to add a [CORS rule](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html) (Cross-Origin Resource Sharing).
 
 Here is a command that will automatically do it for you!
 
 ```groovy
 // If all the settings are defined in your Config.groovy
-grails asset-karman-directory-cors --origin=*.mydomain.com
+grails asset-cdn-directory-cors --origin=*.mydomain.com
 // Or
-grails asset-karman-directory-cors --origin=*.mydomain.com --provider=S3 --directory=my-bucket --region=eu-west-1 --access-key=$MY_S3_ACCESS_KEY --secret-key=$MY_S3_SECRET_KEY
+grails asset-cdn-directory-cors --origin=*.mydomain.com --provider=S3 --directory=my-bucket --region=eu-west-1 --access-key=$MY_S3_ACCESS_KEY --secret-key=$MY_S3_SECRET_KEY
 ```
 
 ## Using your CDN-based assets

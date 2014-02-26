@@ -3,10 +3,10 @@ import com.amazonaws.services.s3.model.CORSRule
 
 import static com.amazonaws.services.s3.model.CORSRule.AllowedMethods.*
 
-includeTargets << new File("${karmanAssetPipelinePluginDir}/scripts/_AssetKarman.groovy")
+includeTargets << new File("${cdnAssetPipelinePluginDir}/scripts/_AssetCdn.groovy")
 
 USAGE = """
-    asset-karman-directory-cors --origin=ORIGIN [--rule-id=RULE_ID] [--directory=DIRECTORY] [--region=REGION] [--access-key=ACCESS_KEY] [--secret-key=SECRET_KEY]
+    asset-cdn-cors --origin=ORIGIN [--rule-id=RULE_ID] [--directory=DIRECTORY] [--region=REGION] [--access-key=ACCESS_KEY] [--secret-key=SECRET_KEY]
 
 where
     ORIGIN          = Origin to allow.
@@ -32,33 +32,33 @@ where
                     (default: grails.assets.karman.secretKey)
 """
 
-target(main: "Add a CORS GET rule for a given origin and an AWS S3 directory") {
+target(main: "Add a CORS GET rule for a given origin and a bucket") {
     loadConfig() // Load config and parse arguments
 
     // Parse parameter
     String origin = argsMap['origin'] ?: ''
     String ruleId = argsMap['rule-id'] ?: 'GetRule'
     if (!origin) {
-        event("StatusError", ["Origin is a required argument, use 'grails help asset-karman-directory-cors' to show usage."])
+        event("StatusError", ["Origin is a required argument, use 'grails help asset-cdn-cors' to show usage."])
         exit 1
     }
     if (!providerName) {
-        event("StatusError", ["Provider is required, use 'grails help asset-karman-directory-cors' to show usage."])
+        event("StatusError", ["Provider is required, use 'grails help asset-cdn-cors' to show usage."])
         exit 1
     } else if (providerName != 'S3') {
         event("StatusError", ["Sorry, only S3 provider is supported."])
         exit 1
     }
     if (!directory) {
-        event("StatusError", ["Directory is required, use 'grails help asset-karman-directory-cors' to show usage."])
+        event("StatusError", ["Directory is required, use 'grails help asset-cdn-cors' to show usage."])
         exit 1
     }
     if (!accessKey) {
-        event("StatusError", ["Access key is required, use 'grails help asset-karman-directory-cors' to show usage."])
+        event("StatusError", ["Access key is required, use 'grails help asset-cdn-cors' to show usage."])
         exit 1
     }
     if (!secretKey) {
-        event("StatusError", ["Secret key is required, use 'grails help asset-karman-directory-cors' to show usage."])
+        event("StatusError", ["Secret key is required, use 'grails help asset-cdn-cors' to show usage."])
         exit 1
     }
 

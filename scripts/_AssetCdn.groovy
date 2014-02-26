@@ -1,7 +1,7 @@
 includeTargets << grailsScript("_GrailsInit")
 includeTargets << new File(assetPipelinePluginDir, "scripts/_AssetCompile.groovy")
 
-target(loadConfig: "Load Karman assets config") {
+target(loadConfig: "Load CDN assets config") {
     depends(compile, parseArguments)
 
     if (argsMap['help']) {

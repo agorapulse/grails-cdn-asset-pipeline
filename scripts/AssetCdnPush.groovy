@@ -1,10 +1,10 @@
 import com.amazonaws.services.s3.Headers
 import groovy.io.FileType
 
-includeTargets << new File("${karmanAssetPipelinePluginDir}/scripts/_AssetKarman.groovy")
+includeTargets << new File("${cdnAssetPipelinePluginDir}/scripts/_AssetCdn.groovy")
 
 USAGE = """
-    asset-karman-push [--provider=PROVIDER] [--directory=DIRECTORY] [--access-key=ACCESS_KEY] [--secret-key=SECRET_KEY] [--prefix=PREFIX] [--expires=EXPIRES] [--region=REGION]
+    asset-cdn-push [--provider=PROVIDER] [--directory=DIRECTORY] [--access-key=ACCESS_KEY] [--secret-key=SECRET_KEY] [--prefix=PREFIX] [--expires=EXPIRES] [--region=REGION]
 
 where
     PROVIDER        = Provider name (ex.: S3).
@@ -29,23 +29,23 @@ where
                     (default: grails.assets.karman.prefix)
 """
 
-target(assetKarmanPush: "Upload static assets to Karman directory") {
+target(main: "Upload static assets to CDN") {
     loadConfig() // Load config and parse arguments
 
     if (!providerName) {
-        event("StatusError", ["Provider is required, use 'grails help asset-karman-push' to show usage."])
+        event("StatusError", ["Provider is required, use 'grails help asset-cdn-push' to show usage."])
         exit 1
     }
     if (!directory) {
-        event("StatusError", ["Directory is required, use 'grails help asset-karman-push' to show usage."])
+        event("StatusError", ["Directory is required, use 'grails help asset-cdn-push' to show usage."])
         exit 1
     }
     if (!accessKey) {
-        event("StatusError", ["Access key is required, use 'grails help asset-karman-push' to show usage."])
+        event("StatusError", ["Access key is required, use 'grails help asset-cdn-push' to show usage."])
         exit 1
     }
     if (!secretKey) {
-        event("StatusError", ["Secret key is required, use 'grails help asset-karman-push' to show usage."])
+        event("StatusError", ["Secret key is required, use 'grails help asset-cdn-push' to show usage."])
         exit 1
     }
 
@@ -107,4 +107,4 @@ target(assetKarmanPush: "Upload static assets to Karman directory") {
     event("StatusFinal", ["Assets push complete: $uploadCount assets uploaded to directory '$directory'"])
 }
 
-setDefaultTarget(assetKarmanPush)
+setDefaultTarget(main)

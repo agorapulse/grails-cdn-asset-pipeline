@@ -51,21 +51,48 @@ You can add your config in **Config.groovy** but it is not required, all paramet
 def appName = grails.util.Metadata.current.'app.name'
 def appVersion = grails.util.Metadata.current.'app.version'
 
+// Single provider
 grails {
     assets {
         cdn {
-            provider = 'S3' // Karman provider
+            provider = 's3' // Karman provider
             directory = 'my-bucket'
             accessKey = '{MY_S3_ACCESS_KEY}'
             secretKey = '{MY_S3_SECRET_KEY}'
-            prefix = "assets/${appName}-${appVersion}/" // This is just a prefix example
+            storagePath = "assets/${appName}-${appVersion}/" // This is just a prefix example
             expires = 365 // Expires in 1 year (value in days)
+        }
+    }
+}
+
+// Or multiple providers
+grails {
+    assets {
+        cdn {
+            providers = [
+                [
+                    provider: 's3',
+                    directory: 'my-s3-bucket',
+                    accessKey: '{MY_S3_ACCESS_KEY}',
+                    secretKey: '{MY_S3_SECRET_KEY}',
+                    storagePath: "assets/${appName}-${appVersion}/", // This is just a prefix example
+                    expires: 365 // Expires in 1 year (value in days)
+                ],
+                [
+                    provider: 'gae', // Fictive provider
+                    directory: 'my-gae-bucket',
+                    accessKey: '{MY_GAE_ACCESS_KEY}',
+                    secretKey: '{MY_GAE_SECRET_KEY}',
+                    storagePath: "assets/${appName}-${appVersion}/", // This is just a prefix example
+                    expires: 365 // Expires in 1 year (value in days)
+                ]
+            ]
         }
     }
 }
 ```
 
-**prefix** config param is not required, but it is useful to version your assets automatically, so that you don't have to handle cache invalidation.
+**storagePath** config param is not required, but it is useful to version your assets automatically, so that you don't have to handle cache invalidation.
 
 You should set a pretty big **expires** value (to add **Cache-Control** and **Expires** metadata), so that browsers cache assets locally.
 
@@ -84,7 +111,7 @@ Add this command to your build process (usually before war generation and deploy
 // If all the settings are defined in your Config.groovy
 grails asset-cdn-push
 // Or
-grails asset-cdn-push --provider=S3 --directory=my-bucket --prefix=some-prefix --expires=365 --region=eu-west-1 --access-key=$MY_S3_ACCESS_KEY --secret-key=$MY_S3_SECRET_KEY
+grails asset-cdn-push --provider=S3 --directory=my-bucket --storage-path=some-prefix --expires=365 --region=eu-west-1 --access-key=$MY_S3_ACCESS_KEY --secret-key=$MY_S3_SECRET_KEY
 ```
 
 ## Allowing your domain with a CORS rule

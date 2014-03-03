@@ -1,9 +1,9 @@
 class CdnAssetPipelineGrailsPlugin {
 
-    def version = "0.1"
+    def version = "0.1-SNAPSHOT"
     def grailsVersion = "2.0 > *"
     def dependsOn = ['asset-pipeline': '1.5 > *']
-    def loadAfter = ['asset-pipeline']
+    def loadAfter = ['asset-pipeline','karmanAws']
 
     def author = "Benoit Hediard"
     def authorEmail = "ben@benorama.Ccm"

@@ -4,7 +4,6 @@ includeTargets << new File(assetPipelinePluginDir, "scripts/_AssetCompile.groovy
 
 target(loadConfig: "Load CDN assets config") {
     depends(compile, parseArguments)
-    
 
     if (argsMap['help']) {
         println USAGE
@@ -17,30 +16,34 @@ target(loadConfig: "Load CDN assets config") {
     providers = []
 
     def cdnAssetsConfig = grailsApp.config.grails.assets?.cdn
-
     providers = cdnAssetsConfig.providers ?: []
 
-    if(providers.size() == 0) {
+    if (!providers) {
         def providerObject = [:]
-        providerObject.provider = argsMap['provider'] ?: cdnAssetsConfig?.provider
-        providerObject.directory = argsMap['directory'] ?: cdnAssetsConfig?.directory
-        providerObject.accessKey = argsMap['access-key'] ?: cdnAssetsConfig?.accessKey
-        providerObject.secretKey = argsMap['secret-key'] ?: cdnAssetsConfig?.secretKey
-        providerObject.region = argsMap['region'] ?: cdnAssetsConfig?.region
+        providerObject.provider = argsMap['provider'] ?: cdnAssetsConfig?.provider ?: ''
+        providerObject.directory = argsMap['directory'] ?: cdnAssetsConfig?.directory ?: ''
+        providerObject.accessKey = argsMap['access-key'] ?: cdnAssetsConfig?.accessKey ?: ''
+        providerObject.secretKey = argsMap['secret-key'] ?: cdnAssetsConfig?.secretKey ?: ''
+        providerObject.region = argsMap['region'] ?: cdnAssetsConfig?.region ?: ''
         providers << providerObject
     }
 
-    def prefix = argsMap['prefix'] ?: cdnAssetsConfig.prefix
+    def storagePath = argsMap['storage-path'] ?: cdnAssetsConfig.storagePath ?: ''
+
     providers.each { provider ->
-        if(provider.provider?.toLowerCase() == 's3')
-        def awsConfig = grailsApp.config.grails.plugin?.awssdk
-        if (!provider.directory) provider.directory = awsConfig?.s3?.bucket ?: awsConfig?.bucket
-        if (!provider.accessKey) provider.accessKey = awsConfig?.s3?.accessKey ?: awsConfig?.accessKey
-        if (!provider.secretKey) provider.secretKey = awsConfig?.s3?.secretKey ?: awsConfig?.secretKey
-        if (!provider.region)    provider.region = awsConfig?.s3?.region ?: awsConfig?.region ?: ''
-        if(!provider.storagePath) provider.storagePath = prefix
+        provider.provider = provider.provider?.toLowerCase()
+        if (!provider.storagePath) provider.storagePath = storagePath
+        if (provider.provider == 's3') {
+            // If no config is provided for S3, default to AWS SDK plugin config
+            def awsConfig = grailsApp.config.grails.plugin?.awssdk
+            if (awsConfig) {
+                if (!provider.directory) provider.directory = awsConfig?.s3?.bucket ?: ''
+                if (!provider.accessKey) provider.accessKey = awsConfig?.s3?.accessKey ?: awsConfig?.accessKey ?: ''
+                if (!provider.secretKey) provider.secretKey = awsConfig?.s3?.secretKey ?: awsConfig?.secretKey ?: ''
+                if (!provider.region)    provider.region = awsConfig?.s3?.region ?: awsConfig?.region ?: ''
+            }
+        }
     }
-    
 
     // Global expirationDate var
     expirationDate = null
@@ -54,5 +57,4 @@ target(loadConfig: "Load CDN assets config") {
             expirationDate = new Date() + expires.toInteger()
         }
     }
-
 }

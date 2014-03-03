@@ -1,10 +1,7 @@
-import com.amazonaws.services.s3.Headers
-import groovy.io.FileType
-
 includeTargets << new File("${cdnAssetPipelinePluginDir}/scripts/_AssetCdn.groovy")
 
 USAGE = """
-    asset-cdn-push [--provider=PROVIDER] [--directory=DIRECTORY] [--access-key=ACCESS_KEY] [--secret-key=SECRET_KEY] [--prefix=PREFIX] [--expires=EXPIRES] [--region=REGION]
+    asset-cdn-push [--provider=PROVIDER] [--directory=DIRECTORY] [--access-key=ACCESS_KEY] [--secret-key=SECRET_KEY] [--storage-path=PREFIX] [--expires=EXPIRES] [--region=REGION]
 
 where
     PROVIDER        = Provider name (ex.: S3).
@@ -32,23 +29,26 @@ where
 target(main: "Upload static assets to CDN") {
     loadConfig() // Load config and parse arguments
 
-    if (!providerName) {
+    if (!providers) {
         event("StatusError", ["Provider is required, use 'grails help asset-cdn-push' to show usage."])
         exit 1
     }
-    if (!directory) {
+    if (!providers.first().provider) {
+        event("StatusError", ["Provider is required, use 'grails help asset-cdn-push' to show usage."])
+        exit 1
+    }
+    if (!providers.first().directory) {
         event("StatusError", ["Directory is required, use 'grails help asset-cdn-push' to show usage."])
         exit 1
     }
-    if (!accessKey) {
+    if (!providers.first().accessKey) {
         event("StatusError", ["Access key is required, use 'grails help asset-cdn-push' to show usage."])
         exit 1
     }
-    if (!secretKey) {
+    if (!providers.first().secretKey) {
         event("StatusError", ["Secret key is required, use 'grails help asset-cdn-push' to show usage."])
         exit 1
     }
-
 
     if (expirationDate) {
         event("StatusUpdate", ["Expiration date set to $expirationDate"])
@@ -56,12 +56,11 @@ target(main: "Upload static assets to CDN") {
 
     assetCompile() // Compile assets
     def assetSyncClass = classLoader.loadClass('asset.pipeline.cdn.AssetSync')
-    def options = [:]
-    options.expirationDate = expirationDate
-    options.providers = providers
-    def assetSync = assetSyncClass.newInstance(options,eventListener)
-
-    
+    def options = [
+            expirationDate: expirationDate,
+            providers: providers
+    ]
+    def assetSync = assetSyncClass.newInstance(options, eventListener)
 
     // Push resources to directory
     assetSync.sync()

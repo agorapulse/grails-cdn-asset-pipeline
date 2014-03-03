@@ -26,6 +26,10 @@ class AssetSync {
 	}
 
 	def sync() {
+		if(localProvider[localDirectory].exists() == false) {
+	        eventListener?.triggerEvent("StatusError", "Could not push assets, target/assets directory not found")
+	        return false
+		}
 		providers.eachWithIndex { provider, index ->
 			eventListener?.triggerEvent("StatusUpdate", "Syncing Assets with Storage Provider ${index+1} of ${providers.size()}")
 
@@ -38,18 +42,27 @@ class AssetSync {
 	def synchronizeProvider(providerMeta) {
 
 		try {
-			def remoteDirectory = providerMeta.remove('storagePath')
-			def provider = StorageProvider.create(providerMeta + [defaultFileACL: CloudFileACL.PublicRead])
+			def remoteDirectory    = providerMeta.remove('storagePath')
+			if (!remoteDirectory.endsWith('/')) {
+				remoteDirectory = "${remoteDirectory}/"
+			}
+		    if (remoteDirectory.startsWith('/')) {
+		    	remoteDirectory = remoteDirectory.replaceFirst('/', '')	
+	    	} 
+			def provider           = StorageProvider.create(providerMeta + [defaultFileACL: CloudFileACL.PublicRead])
+			def files              = localProvider[localDirectory].listFiles()
+			def remoteManifestFile = provider[remoteDirectory ?: localDirectory]['manifest.properties'] //Lets check if a remote manifest exists
+			def remoteManifest     = new Properties()
 
-			def remoteManifestFile = provider[localDirectory]['manifest.properties'] //Lets check if a remote manifest exists
-			def remoteManifest = new Properties()
 			if(remoteManifestFile.exists()) {
 				remoteManifest.load(remoteManifestFile.inputStream)
+				// def localManifestFile = localProvider[localDirectory]['manifest.properties']
+				// if(localManifestFile.exists()) {
+
+				// }
 				// TODO: We need to download this manifest, run a comparison and only upload/remove whats changed
 			}
-
-
-			def files = localProvider.listFiles()
+			
 			files.eachWithIndex { localFile, index ->
 				eventListener?.triggerEvent("StatusUpdate", "Uploading File ${index+1} of ${files.size()} - ${localFile.name}")
 				def cloudFile = provider[remoteDirectory ?: localDirectory][localFile.name]

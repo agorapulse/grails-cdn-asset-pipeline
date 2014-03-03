@@ -14,23 +14,33 @@ target(loadConfig: "Load CDN assets config") {
     loadApp()
     configureApp()
     initKarman()
+    providers = []
 
     def cdnAssetsConfig = grailsApp.config.grails.assets?.cdn
 
-    // Parse arguments
-    providerName = argsMap['provider'] ?: cdnAssetsConfig?.provider
-    directory = argsMap['directory'] ?: cdnAssetsConfig?.directory
-    accessKey = argsMap['access-key'] ?: cdnAssetsConfig?.accessKey
-    secretKey = argsMap['secret-key'] ?: cdnAssetsConfig?.secretKey
-    region = argsMap['region'] ?: cdnAssetsConfig?.region
+    providers = cdnAssetsConfig.providers ?: []
 
-    if (providerName == 'S3') {
-        def awsConfig = grailsApp.config.grails.plugin?.awssdk
-        if (!directory) directory = awsConfig?.s3?.bucket ?: awsConfig?.bucket
-        if (!accessKey) accessKey = awsConfig?.s3?.accessKey ?: awsConfig?.accessKey
-        if (!secretKey) secretKey = awsConfig?.s3?.secretKey ?: awsConfig?.secretKey
-        if (!region) region = awsConfig?.s3?.region ?: awsConfig?.region ?: ''
+    if(providers.size() == 0) {
+        def providerObject = [:]
+        providerObject.provider = argsMap['provider'] ?: cdnAssetsConfig?.provider
+        providerObject.directory = argsMap['directory'] ?: cdnAssetsConfig?.directory
+        providerObject.accessKey = argsMap['access-key'] ?: cdnAssetsConfig?.accessKey
+        providerObject.secretKey = argsMap['secret-key'] ?: cdnAssetsConfig?.secretKey
+        providerObject.region = argsMap['region'] ?: cdnAssetsConfig?.region
+        providers << providerObject
     }
+
+    def prefix = argsMap['prefix'] ?: cdnAssetsConfig.prefix
+    providers.each { provider ->
+        if(provider.provider?.toLowerCase() == 's3')
+        def awsConfig = grailsApp.config.grails.plugin?.awssdk
+        if (!provider.directory) provider.directory = awsConfig?.s3?.bucket ?: awsConfig?.bucket
+        if (!provider.accessKey) provider.accessKey = awsConfig?.s3?.accessKey ?: awsConfig?.accessKey
+        if (!provider.secretKey) provider.secretKey = awsConfig?.s3?.secretKey ?: awsConfig?.secretKey
+        if (!provider.region)    provider.region = awsConfig?.s3?.region ?: awsConfig?.region ?: ''
+        if(!provider.storagePath) provider.storagePath = prefix
+    }
+    
 
     // Global expirationDate var
     expirationDate = null
@@ -45,25 +55,4 @@ target(loadConfig: "Load CDN assets config") {
         }
     }
 
-    // Global prefix var
-    prefix = argsMap['prefix'] ?: cdnAssetsConfig.prefix ?: ''
-    if (!prefix.endsWith('/')) prefix = "$prefix/"
-    if (prefix.startsWith('/')) prefix = prefix.replaceFirst('/', '')
-}
-
-target(loadProvider: "Load Karman provider") {
-    depends(loadConfig)
-
-    // Load provider
-    try {
-        String className = "com.bertramlabs.plugins.karman.${providerName == 'S3' ? 'aws' : providerName.toLowerCase()}.${providerName}StorageProvider"
-        provider = Class.forName(className, false, Thread.currentThread().contextClassLoader).newInstance(
-                accessKey: accessKey,
-                secretKey: secretKey,
-                region: region
-        )
-    } catch (ClassNotFoundException exception) {
-        event("StatusError", ["Provider class not found: ${exception.message}."])
-        exit 1
-    }
 }

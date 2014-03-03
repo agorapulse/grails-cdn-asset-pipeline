@@ -55,56 +55,18 @@ target(main: "Upload static assets to CDN") {
     }
 
     assetCompile() // Compile assets
-    loadProvider() // Load provider
+    def assetSyncClass = classLoader.loadClass('asset.pipeline.cdn.AssetSync')
+    def options = [:]
+    options.expirationDate = expirationDate
+    options.providers = providers
+    def assetSync = assetSyncClass.newInstance(options,eventListener)
 
-    int uploadCount = 0
+    
 
     // Push resources to directory
-    def assetPath = 'target/assets'
-    def assetDir = new File(assetPath)
-    if (!assetDir.exists()) {
-        event("StatusError", ["Could not push assets, target/assets directory not found"])
-    } else {
-        List list = []
-        assetDir.eachFileRecurse (FileType.FILES) { file ->
-            list << file
-        }
+    assetSync.sync()
 
-        int total = list.size()
-        list.eachWithIndex { File file, index ->
-            String name = prefix + file.path.replace("${assetPath}/", '')
-            event("StatusUpdate", ["Uploading File ${index} of ${total} -  $name"])
-            def cloudFile = provider[directory][name]
-            if (expirationDate) {
-                cloudFile.setMetaAttribute("Cache-Control", "PUBLIC, max-age=${(expirationDate.time / 1000).toInteger()}, must-revalidate")
-                cloudFile.setMetaAttribute("Expires", expirationDate)
-            }
-            // Specify some content types for extension not handled by URLConnection.guessContentType
-            Map contentTypes = [
-                    css: 'text/css',
-                    gz: 'application/x-compressed',
-                    js: 'application/javascript',
-                    pdf: 'application/pdf',
-                    eot: 'application/vnd.ms-fontobject',
-                    otf: 'font/opentype',
-                    svg: 'image/svg+xml',
-                    ttf: 'application/x-font-ttf',
-                    woff: 'application/x-font-woff'
-            ]
-            String extension = file.name.tokenize('.').last()
-            if (contentTypes[extension]) {
-                cloudFile.contentType = contentTypes[extension]
-            } else {
-                cloudFile.contentType = URLConnection.guessContentTypeFromName(file.name)
-            }
-            cloudFile.bytes = file.bytes
-            // Upload file
-            cloudFile.save('public-read')
-            uploadCount++
-        }
-    }
-
-    event("StatusFinal", ["Assets push complete: $uploadCount assets uploaded to directory '$directory'"])
+    event("StatusFinal", ["Assets push complete!"])
 }
 
 setDefaultTarget(main)

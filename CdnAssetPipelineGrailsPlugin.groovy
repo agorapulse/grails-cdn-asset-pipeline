@@ -15,5 +15,5 @@ class CdnAssetPipelineGrailsPlugin {
     def organization = [ name: "AgoraPulse", url: "http://www.agorapulse.com/" ]
     def issueManagement = [ system: "github", url: "https://github.com/agorapulse/grails-cdn-asset-pipeline" ]
     def scm = [  url: "https://github.com/agorapulse/grails-cdn-asset-pipeline" ]
-
+    def developers      = [ [name: 'David Estes']  ]
 }

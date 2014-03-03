@@ -1,8 +1,10 @@
 includeTargets << grailsScript("_GrailsInit")
+includeTargets << new File(karmanPluginDir, "scripts/_InitKarman.groovy")
 includeTargets << new File(assetPipelinePluginDir, "scripts/_AssetCompile.groovy")
 
 target(loadConfig: "Load CDN assets config") {
     depends(compile, parseArguments)
+    
 
     if (argsMap['help']) {
         println USAGE
@@ -11,6 +13,7 @@ target(loadConfig: "Load CDN assets config") {
 
     loadApp()
     configureApp()
+    initKarman()
 
     def cdnAssetsConfig = grailsApp.config.grails.assets?.cdn
 

@@ -76,8 +76,8 @@ target(main: "Upload static assets to CDN") {
             event("StatusUpdate", ["Uploading File ${index} of ${total} -  $name"])
             def cloudFile = provider[directory][name]
             if (expirationDate) {
-                cloudFile.setMetaAttribute(Headers.CACHE_CONTROL, "PUBLIC, max-age=${(expirationDate.time / 1000).toInteger()}, must-revalidate")
-                cloudFile.setMetaAttribute(Headers.EXPIRES, expirationDate)
+                cloudFile.setMetaAttribute("Cache-Control", "PUBLIC, max-age=${(expirationDate.time / 1000).toInteger()}, must-revalidate")
+                cloudFile.setMetaAttribute("Expires", expirationDate)
             }
             // Specify some content types for extension not handled by URLConnection.guessContentType
             Map contentTypes = [

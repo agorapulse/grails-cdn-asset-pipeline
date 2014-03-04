@@ -37,7 +37,7 @@ grails.project.dependency.resolution = {
         }
 		plugins {
 				//here go your plugin dependencies
-				runtime ':cdn-asset-pipeline:0.1'
+				runtime ':cdn-asset-pipeline:0.2'
 		}
 }
 ```
@@ -137,8 +137,8 @@ grails.assets.url = "https://s3.amazonaws.com/my-bucket/assets/${appName}-${appV
 
 # Latest releases
 
-Coming soon...
+* 2014-03-04 **V0.2** : Initial release
 
 # Bugs
 
-To report any bug, please use the project [Issues](http://github.com/agorapulse/karman-asset-pipeline/issues) section on GitHub.
+To report any bug, please use the project [Issues](http://github.com/agorapulse/grails-cdn-asset-pipeline/issues) section on GitHub.

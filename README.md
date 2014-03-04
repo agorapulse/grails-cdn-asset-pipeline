@@ -19,6 +19,8 @@ It adds two [Grails](http://grails.org) Gant scripts:
 - *asset-cdn-push* to upload assets to a CDN directory/bucket,
 - *asset-cdn-cors* to add a CORS GetRule to a directory/bucket.
 
+Kudos to *David Estes* for [Asset Pipeline](http://grails.org/plugin/asset-pipeline) and [Karman](http://grails.org/plugin/karman) Grails plugins as well as his feedback on this one !
+
 Note: for this initial release, only *S3* provider is supported.
 
 # Installation

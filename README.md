@@ -9,8 +9,8 @@ Those scripts can easily be integrated to a build pipeline for continuous delive
 
 You should always use a CDN to host all your app static assets:
 
-- *great for your users*: faster browser page rendering thanks to CDN,
-- *great for your servers*: less static requests to handle = increased load capabilities.
+- **great for your users**: faster browser page rendering thanks to CDN,
+- **great for your servers**: less static requests to handle = increased load capabilities.
 
 Undercover, it uses [Asset Pipeline](http://grails.org/plugin/asset-pipeline) Grails Plugin to precompile assets and [Karman](http://grails.org/plugin/karman) Grails Plugin to upload files to various Cloud Storage Services.
 
@@ -19,7 +19,7 @@ It adds two [Grails](http://grails.org) Gant scripts:
 - *asset-cdn-push* to upload assets to a CDN directory/bucket,
 - *asset-cdn-cors* to add a CORS GetRule to a directory/bucket.
 
-Kudos to *David Estes* for [Asset Pipeline](http://grails.org/plugin/asset-pipeline) and [Karman](http://grails.org/plugin/karman) Grails plugins as well as his feedback on this one !
+Kudos to *David Estes* for [Asset Pipeline](http://grails.org/plugin/asset-pipeline) and [Karman](http://grails.org/plugin/karman) Grails plugins as well as his feedback on this one!
 
 Note: for this initial release, only *S3* provider is supported.
 
@@ -47,7 +47,7 @@ grails.project.dependency.resolution = {
 
 # Config
 
-You can add your config in **Config.groovy** but it is not required, all parameters can be passed as arguments to *asset-s3-push*.
+You can add your config in **Config.groovy** but it is not required, all parameters can be passed as arguments to *asset-cdn-push*.
 
 ```groovy
 def appName = grails.util.Metadata.current.'app.name'

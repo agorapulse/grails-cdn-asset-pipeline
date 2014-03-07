@@ -1,6 +1,6 @@
 class CdnAssetPipelineGrailsPlugin {
 
-    def version = "0.2"
+    def version = "0.2.1"
     def grailsVersion = "2.0 > *"
     def dependsOn = ['asset-pipeline': '1.5 > *']
     def loadAfter = ['asset-pipeline','karmanAws']

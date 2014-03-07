@@ -18,9 +18,7 @@ grails.project.dependency.resolution = {
             export = false
         }
 
-        compile(':karman-aws:0.3.1') {
-            export = false
-        }
+        compile ':karman-aws:0.3.1'
         compile ':asset-pipeline:1.6.2'
     }
 }

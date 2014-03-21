@@ -39,7 +39,7 @@ grails.project.dependency.resolution = {
         }
 		plugins {
 				//here go your plugin dependencies
-				compile ':cdn-asset-pipeline:0.2.2'
+				compile ':cdn-asset-pipeline:0.2.3'
 		}
 }
 ```
@@ -139,6 +139,7 @@ grails.assets.url = "https://s3.amazonaws.com/my-bucket/assets/${appName}-${appV
 
 # Latest releases
 
+* 2014-03-21 **V0.2.3** : Asset pipeline plugin upgraded to 1.7.1 + plugin dependencies changed to runtime
 * 2014-03-07 **V0.2.2** : Minor update to BuildConfig + README
 * 2014-03-07 **V0.2.1** : Minor update to BuildConfig (do not export Karman plugins)
 * 2014-03-04 **V0.2** : Initial release

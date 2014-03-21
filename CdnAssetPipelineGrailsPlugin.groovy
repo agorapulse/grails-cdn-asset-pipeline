@@ -1,6 +1,6 @@
 class CdnAssetPipelineGrailsPlugin {
 
-    def version = "0.2.2"
+    def version = "0.2.3"
     def grailsVersion = "2.0 > *"
     def dependsOn = ['asset-pipeline': '1.5 > *']
     def loadAfter = ['asset-pipeline','karmanAws']
@@ -19,5 +19,5 @@ It uses Asset Pipeline Grails Plugin to precompile assets and Karman Grails Plug
     def organization = [ name: "AgoraPulse", url: "http://www.agorapulse.com/" ]
     def issueManagement = [ system: "github", url: "https://github.com/agorapulse/grails-cdn-asset-pipeline" ]
     def scm = [  url: "https://github.com/agorapulse/grails-cdn-asset-pipeline" ]
-    def developers      = [ [name: 'David Estes']  ]
+    def developers      = [ [name: 'Benoit Hediard'], [name: 'David Estes']  ]
 }

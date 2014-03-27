@@ -13,6 +13,7 @@ class AssetSync {
     StorageProvider localProvider
 	String localStoragePath
     Date expirationDate
+    String gzip
 	def eventListener
 
 	AssetSync(options, eventListener) {
@@ -27,6 +28,7 @@ class AssetSync {
         localStoragePath = options.localStoragePath ?: 'assets/'
         localDirectory = localProvider[localStoragePath]
         expirationDate = options.expirationDate
+        gzip = options.gzip
 	}
 
 	def sync() {
@@ -58,6 +60,7 @@ class AssetSync {
 
             Directory remoteDirectory = removeProvider[remoteDirectoryName]
 
+            Map manifestFiles = [:]
             CloudFile localManifestFile = localDirectory['manifest.properties']
             if (localManifestFile.exists()) {
                 // TODO: We need to download this manifest, run a comparison and only upload\/remove whats changed
@@ -67,27 +70,57 @@ class AssetSync {
                     //remoteManifest.load(remoteManifestFile.inputStream)
                     // ...
                 }*/
-            }
 
-            List files = localDirectory.listFiles()
-            files.eachWithIndex { localFile, index ->
-                eventListener?.triggerEvent('StatusUpdate', "Uploading File ${index+1} of ${files.size()} - ${localFile.name}")
-                String fileName = localFile.name
-                String fileExtension = fileName.tokenize('.').last()
-                CloudFile cloudFile = remoteDirectory[remoteStoragePath + fileName]
+                int count = 0
+                localManifestFile.text.eachLine { line ->
+                    if (!line.startsWith('#')) {
+                        manifestFiles[line.tokenize('=').first()] = line.tokenize('=').last()
+                        String compiledFileName = line.tokenize('=').last()
+                        CloudFile localFile = localDirectory[compiledFileName]
 
-                if (expirationDate) {
-                    cloudFile.setMetaAttribute('Cache-Control', "PUBLIC, max-age=${(expirationDate.time / 1000).toInteger()}, must-revalidate")
-                    cloudFile.setMetaAttribute('Expires', expirationDate)
+                        if (localFile.exists()) {
+                            eventListener?.triggerEvent('StatusUpdate', "Uploading File ${count+1} - ${localFile.name}")
+                            CloudFile cloudFile = remoteDirectory[remoteStoragePath + localFile.name]
+                            String cacheControl = "PUBLIC, max-age=${(expirationDate.time / 1000).toInteger()}, must-revalidate"
+
+                            if (expirationDate) {
+                                cloudFile.setMetaAttribute('Cache-Control', cacheControl)
+                                cloudFile.setMetaAttribute('Expires', expirationDate)
+                            }
+
+                            CloudFile compressedLocalFile = localDirectory["${compiledFileName}.gz"]
+                            if (gzip == 'true' && compressedLocalFile.exists()) {
+                                // Upload compressed version
+                                cloudFile.setMetaAttribute('Content-Encoding', 'gzip')
+                                cloudFile.bytes = compressedLocalFile.bytes
+                            } else {
+                                // Upload original version
+                                cloudFile.bytes = localFile.bytes
+                            }
+
+                            cloudFile.contentType = Mimetypes.instance.getMimetype(localFile.name)
+                            cloudFile.save()
+                            count++
+
+                            if (gzip == 'both' && compressedLocalFile.exists()) {
+                                // Upload additional compressed version (with .gz extension)
+                                eventListener?.triggerEvent('StatusUpdate', "Uploading File ${count+1} - ${compressedLocalFile.name}")
+                                CloudFile compressedCloudFile = remoteDirectory[remoteStoragePath + compressedLocalFile.name]
+                                compressedCloudFile.setMetaAttribute('Content-Encoding', 'gzip')
+
+                                if (expirationDate) {
+                                    compressedCloudFile.setMetaAttribute('Cache-Control', cacheControl)
+                                    compressedCloudFile.setMetaAttribute('Expires', expirationDate)
+                                }
+
+                                compressedCloudFile.contentType = cloudFile.contentType
+                                compressedCloudFile.bytes = compressedLocalFile.bytes
+                                compressedCloudFile.save()
+                                count++
+                            }
+                        }
+                    }
                 }
-
-                if (fileExtension == 'gz') {
-                    cloudFile.setMetaAttribute('Content-Encoding', 'gzip')
-                    fileName -= '.gz'
-                }
-                cloudFile.contentType = Mimetypes.instance.getMimetype(fileName)
-                cloudFile.bytes = localFile.bytes
-                cloudFile.save()
             }
 			return true
 		} catch(e) {

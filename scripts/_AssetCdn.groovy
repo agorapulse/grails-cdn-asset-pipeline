@@ -57,4 +57,8 @@ target(loadConfig: "Load CDN assets config") {
             expirationDate = new Date() + expires.toInteger()
         }
     }
+
+    // Global gzip var
+    gzip = argsMap['gzip'] ?: cdnAssetsConfig?.gzip ?: ''
+
 }

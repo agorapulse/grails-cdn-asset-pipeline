@@ -63,6 +63,7 @@ grails {
             secretKey = '{MY_S3_SECRET_KEY}'
             storagePath = "assets/${appName}-${appVersion}/" // This is just a prefix example
             expires = 365 // Expires in 1 year (value in days)
+            gzip = true
         }
     }
 }
@@ -96,6 +97,10 @@ grails {
 
 **storagePath** config param is not required, but it is useful to version your assets automatically, so that you don't have to handle cache invalidation.
 
+**gzip** config param default is **false**, only original compiled files are uploaded.
+If **gzip** is set to **true**, it will upload compressed compiled files.
+If **gzip** is set to **both**, it will upload original compiled files + compressed compiled files (with .gz extension).
+
 You should set a pretty big **expires** value (to add **Cache-Control** and **Expires** metadata), so that browsers cache assets locally.
 
 For S3 provider, config params search order is `grails.assets.cdn` config, then `grails.plugin.awssdk.s3`, then `grails.plugin.awssdk`.
@@ -113,7 +118,7 @@ Add this command to your build process (usually before war generation and deploy
 // If all the settings are defined in your Config.groovy
 grails asset-cdn-push
 // Or
-grails asset-cdn-push --provider=S3 --directory=my-bucket --storage-path=some-prefix --expires=365 --region=eu-west-1 --access-key=$MY_S3_ACCESS_KEY --secret-key=$MY_S3_SECRET_KEY
+grails asset-cdn-push --provider=S3 --directory=my-bucket --gzip=true --storage-path=some-prefix --expires=365 --region=eu-west-1 --access-key=$MY_S3_ACCESS_KEY --secret-key=$MY_S3_SECRET_KEY
 ```
 
 ## Allowing your domain with a CORS rule
@@ -139,6 +144,7 @@ grails.assets.url = "https://s3.amazonaws.com/my-bucket/assets/${appName}-${appV
 
 # Latest releases
 
+* 2014-03-27 **V0.3.0** : Only compiled files are now uploaded (based on assets manifest) + optional gzip param to upload compressed compiled files
 * 2014-03-21 **V0.2.3** : Asset pipeline plugin upgraded to 1.7.1 + plugin dependencies changed to runtime
 * 2014-03-07 **V0.2.2** : Minor update to BuildConfig + README
 * 2014-03-07 **V0.2.1** : Minor update to BuildConfig (do not export Karman plugins)

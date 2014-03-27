@@ -71,15 +71,21 @@ class AssetSync {
 
             List files = localDirectory.listFiles()
             files.eachWithIndex { localFile, index ->
-                eventListener?.triggerEvent("StatusUpdate", "Uploading File ${index+1} of ${files.size()} - ${localFile.name}")
-                CloudFile cloudFile = remoteDirectory[remoteStoragePath + localFile.name]
+                eventListener?.triggerEvent('StatusUpdate', "Uploading File ${index+1} of ${files.size()} - ${localFile.name}")
+                String fileName = localFile.name
+                String fileExtension = fileName.tokenize('.').last()
+                CloudFile cloudFile = remoteDirectory[remoteStoragePath + fileName]
 
                 if (expirationDate) {
-                    cloudFile.setMetaAttribute("Cache-Control", "PUBLIC, max-age=${(expirationDate.time / 1000).toInteger()}, must-revalidate")
-                    cloudFile.setMetaAttribute("Expires", expirationDate)
+                    cloudFile.setMetaAttribute('Cache-Control', "PUBLIC, max-age=${(expirationDate.time / 1000).toInteger()}, must-revalidate")
+                    cloudFile.setMetaAttribute('Expires', expirationDate)
                 }
 
-                cloudFile.contentType = Mimetypes.instance.getMimetype(localFile.name)
+                if (fileExtension == 'gz') {
+                    cloudFile.setMetaAttribute('Content-Encoding', 'gzip')
+                    fileName -= '.gz'
+                }
+                cloudFile.contentType = Mimetypes.instance.getMimetype(fileName)
                 cloudFile.bytes = localFile.bytes
                 cloudFile.save()
             }

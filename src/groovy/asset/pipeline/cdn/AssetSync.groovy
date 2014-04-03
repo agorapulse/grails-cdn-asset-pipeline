@@ -74,8 +74,9 @@ class AssetSync {
                 int count = 0
                 localManifestFile.text.eachLine { line ->
                     if (!line.startsWith('#')) {
-                        manifestFiles[line.tokenize('=').first()] = line.tokenize('=').last()
+                        String originalFileName = line.tokenize('=').first()
                         String compiledFileName = line.tokenize('=').last()
+                        manifestFiles[originalFileName] = compiledFileName
                         CloudFile localFile = localDirectory[compiledFileName]
 
                         if (localFile.exists()) {
@@ -116,6 +117,31 @@ class AssetSync {
                                 compressedCloudFile.contentType = cloudFile.contentType
                                 compressedCloudFile.bytes = compressedLocalFile.bytes
                                 compressedCloudFile.save()
+                                count++
+                            }
+
+                            String extension = originalFileName.tokenize('.').last()
+                            if (extension in ['eot', 'svg', 'ttf', 'woff']) {
+                                // Workaround for webfonts referenced in CSS, upload original file
+                                eventListener?.triggerEvent('StatusUpdate', "Uploading File ${count+1} - ${originalFileName}")
+                                CloudFile originalCloudFile = remoteDirectory[remoteStoragePath + originalFileName]
+
+                                if (expirationDate) {
+                                    originalCloudFile.setMetaAttribute('Cache-Control', cacheControl)
+                                    originalCloudFile.setMetaAttribute('Expires', expirationDate)
+                                }
+
+                                if (gzip == 'true' && compressedLocalFile.exists()) {
+                                    // Upload compressed version
+                                    originalCloudFile.setMetaAttribute('Content-Encoding', 'gzip')
+                                    originalCloudFile.bytes = compressedLocalFile.bytes
+                                } else {
+                                    // Upload original version
+                                    originalCloudFile.bytes = localFile.bytes
+                                }
+
+                                originalCloudFile.contentType = cloudFile.contentType
+                                originalCloudFile.save()
                                 count++
                             }
                         }

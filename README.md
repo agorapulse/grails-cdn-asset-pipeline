@@ -39,7 +39,7 @@ grails.project.dependency.resolution = {
         }
 		plugins {
 				//here go your plugin dependencies
-				compile ':cdn-asset-pipeline:0.2.3'
+				compile ':cdn-asset-pipeline:0.3.1'
 		}
 }
 ```
@@ -144,6 +144,7 @@ grails.assets.url = "https://s3.amazonaws.com/my-bucket/assets/${appName}-${appV
 
 # Latest releases
 
+* 2014-04-03 **V0.3.1** : Upload original web font files (for web fonts referenced in CSS)
 * 2014-03-27 **V0.3.0** : Only compiled files are now uploaded (based on assets manifest) + optional gzip param to upload compressed compiled files
 * 2014-03-21 **V0.2.3** : Asset pipeline plugin upgraded to 1.7.1 + plugin dependencies changed to runtime
 * 2014-03-07 **V0.2.2** : Minor update to BuildConfig + README

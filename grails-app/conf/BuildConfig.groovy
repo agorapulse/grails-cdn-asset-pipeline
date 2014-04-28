@@ -9,16 +9,17 @@ grails.project.dependency.resolution = {
         grailsCentral()
         mavenLocal()
         mavenCentral()
+        mavenRepo 'http://dl.bintray.com/karman/karman'
     }
     dependencies {
     }
     plugins {
-        build ':tomcat:7.0.50.1'
+        build ':tomcat:7.0.52.1'
         build(':release:3.0.1') {
             export = false
         }
 
-        runtime ':karman-aws:0.3.1'
-        runtime ':asset-pipeline:1.7.1'
+        runtime ':karman-aws:0.4.2'
+        runtime ':asset-pipeline:1.8.5'
     }
 }

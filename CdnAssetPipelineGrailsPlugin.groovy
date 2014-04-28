@@ -1,12 +1,12 @@
 class CdnAssetPipelineGrailsPlugin {
 
-    def version = "0.3.1"
+    def version = "0.3.2"
     def grailsVersion = "2.0 > *"
-    def dependsOn = ['asset-pipeline': '1.5 > *']
+    def dependsOn = ['asset-pipeline': '1.5.0 > *']
     def loadAfter = ['asset-pipeline','karmanAws']
 
     def author = "Benoit Hediard"
-    def authorEmail = "ben@benorama.Ccm"
+    def authorEmail = "ben@benorama.com"
     def title = "CDN Asset Pipeline Plugin"
     def description = '''
 Provides Gant scripts to automatically upload Grails app static assets to CDNs.

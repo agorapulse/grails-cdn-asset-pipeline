@@ -20,6 +20,6 @@ grails.project.dependency.resolution = {
         }
 
         runtime ':karman-aws:0.4.2'
-        runtime ':asset-pipeline:1.8.5'
+        runtime ':asset-pipeline:1.8.7'
     }
 }

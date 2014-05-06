@@ -63,18 +63,17 @@ class AssetSync {
             Map manifestFiles = [:]
             CloudFile localManifestFile = localDirectory['manifest.properties']
             if (localManifestFile.exists()) {
-                // TODO: We need to download this manifest, run a comparison and only upload\/remove whats changed
-                /*CloudFile remoteManifestFile = remoteDirectory[remoteStoragePath + 'manifest.properties'] //Lets check if a remote manifest exists
+                CloudFile remoteManifestFile = remoteDirectory[remoteStoragePath + 'manifest.properties'] //Lets check if a remote manifest exists
                 Properties remoteManifest = new Properties()
                 if (remoteManifestFile.exists()) {
-                    //remoteManifest.load(remoteManifestFile.inputStream)
-                    // ...
-                }*/
+                    remoteManifest.load(remoteManifestFile.inputStream)
+                }
 
                 int count = 0
                 localManifestFile.text.eachLine { line ->
-                    if (!line.startsWith('#')) {
-                        String originalFileName = line.tokenize('=').first()
+                    String originalFileName = line.tokenize('=').first()
+                    // Ignore file already defined in remote manifest
+                    if (!line.startsWith('#') && (!remoteManifest || !remoteManifest.getProperty(originalFileName))) {
                         String compiledFileName = line.tokenize('=').last()
                         manifestFiles[originalFileName] = compiledFileName
                         CloudFile localFile = localDirectory[compiledFileName]
@@ -147,6 +146,9 @@ class AssetSync {
                         }
                     }
                 }
+                // Upload manifest
+                remoteManifestFile.bytes = localManifestFile.bytes
+                remoteManifestFile.save()
             }
 			return true
 		} catch(e) {

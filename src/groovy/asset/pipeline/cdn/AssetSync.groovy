@@ -72,9 +72,9 @@ class AssetSync {
                 int count = 0
                 localManifestFile.text.eachLine { line ->
                     String originalFileName = line.tokenize('=').first()
+                    String compiledFileName = line.tokenize('=').last()
                     // Ignore file already defined in remote manifest
-                    if (!line.startsWith('#') && (!remoteManifest || !remoteManifest.getProperty(originalFileName))) {
-                        String compiledFileName = line.tokenize('=').last()
+                    if (!line.startsWith('#') && (!remoteManifest || !remoteManifest.getProperty(originalFileName) || remoteManifest.getProperty(originalFileName) != compiledFileName)) {
                         manifestFiles[originalFileName] = compiledFileName
                         CloudFile localFile = localDirectory[compiledFileName]
 

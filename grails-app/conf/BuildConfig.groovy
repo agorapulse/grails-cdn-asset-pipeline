@@ -23,7 +23,7 @@ grails.project.dependency.resolution = {
                 ':coveralls:0.1') {
             export = false
         }
-        test(':code-coverage:1.2.7') {
+        test(':code-coverage:2.0.3-3') {
             export = false
         }
         runtime ':karman-aws:0.4.2'

@@ -33,7 +33,7 @@ grails.project.dependency.resolution = {
 		log "info"
 		repositories {
                 //your repositories
-                mavenRepo 'http://dl.bintray.com/karman/karman'
+                mavenRepo 'http://dl.bintray.com/bertramlabs/karman/'
         }
         dependencies {
                 //your dependencies

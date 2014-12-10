@@ -26,7 +26,7 @@ grails.project.dependency.resolution = {
         runtime ':asset-pipeline:2.0.17'
         build(':release:3.0.1',
                 ':rest-client-builder:1.0.3',
-                ':coveralls:0.1') {
+                ':coveralls:0.1.3') {
             export = false
         }
         test(':code-coverage:2.0.3-3') {

@@ -145,6 +145,7 @@ grails.assets.url = "https://s3.amazonaws.com/my-bucket/assets/${appName}-${appV
 
 # Latest releases
 
+* 2014-12-10 **V0.4.0** : Karman AWS Grails Plugin upgraded to 0.5.1 and Asset pipeline Grails Plugin upgraded to 2.0.17
 * 2014-05-13 **V0.3.5** : Bug fix when checking existing remote files
 * 2014-05-06 **V0.3.4** : Use manifest to ignore existing remote files
 * 2014-04-29 **V0.3.3** : Minor fix

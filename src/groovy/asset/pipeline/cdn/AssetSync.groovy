@@ -151,9 +151,9 @@ class AssetSync {
                 remoteManifestFile.save()
             }
 			return true
-		} catch(e) {
+		} catch(Exception e) {
             providerMeta.remove('secretKey') // Remove secret key from error logs
-            eventListener?.triggerEvent("StatusError", "Error synchronizing with provider ${providerMeta}")
+            eventListener?.triggerEvent("StatusError", "Error synchronizing with provider ${providerMeta}, with error message: ${e.message}")
         }
 		return false
 	}

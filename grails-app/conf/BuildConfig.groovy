@@ -9,20 +9,15 @@ grails.project.dependency.resolution = {
         grailsCentral()
         mavenLocal()
         mavenCentral()
-        mavenRepo 'http://dl.bintray.com/bertramlabs/karman/'
     }
     dependencies {
         // Latest httpcore and httpmime for Coveralls plugin
         build 'org.apache.httpcomponents:httpcore:4.3.2'
         build 'org.apache.httpcomponents:httpclient:4.3.2'
         build 'org.apache.httpcomponents:httpmime:4.3.3'
-        // Latest karman-aws-groovy
-        runtime 'com.bertramlabs.plugins:karman-aws-groovy:0.6.0'
     }
     plugins {
-        runtime(':karman-aws:0.5.1') {
-            excludes 'com.bertramlabs.plugins:karman-aws-groovy'
-        }
+        runtime ':karman-aws:0.6.1'
         runtime ':asset-pipeline:2.0.17'
         build(':release:3.0.1',
                 ':rest-client-builder:1.0.3',

@@ -11,6 +11,9 @@ grails.project.dependency.resolution = {
         mavenCentral()
     }
     dependencies {
+        // Required by Coveralls plugin
+        build 'org.apache.httpcomponents:httpmime:4.3.6'
+        // Latest AWS SDK lib
         runtime 'com.amazonaws:aws-java-sdk:1.10.0'
     }
     plugins {

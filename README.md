@@ -39,7 +39,7 @@ grails.project.dependency.resolution = {
         }
 		plugins {
 				//here go your plugin dependencies
-				compile ':cdn-asset-pipeline:0.4.1'
+				compile ':cdn-asset-pipeline:0.4.2'
 		}
 }
 ```
@@ -144,6 +144,7 @@ grails.assets.url = "https://s3.amazonaws.com/my-bucket/assets/${appName}-${appV
 
 # Latest releases
 
+* 2015-06-13 **V0.4.2** : AWS Java SDK dependency upgraded to 1.10.0
 * 2014-12-10 **V0.4.1** : Karman AWS Grails Plugin upgraded to 0.6.1
 * 2014-12-10 **V0.4.0** : Karman AWS Grails Plugin upgraded to 0.5.1 and Asset pipeline Grails Plugin upgraded to 2.0.17
 * 2014-05-13 **V0.3.5** : Bug fix when checking existing remote files

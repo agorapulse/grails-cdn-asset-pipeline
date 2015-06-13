@@ -11,14 +11,13 @@ grails.project.dependency.resolution = {
         mavenCentral()
     }
     dependencies {
-        // Latest httpcore and httpmime for Coveralls plugin
-        build 'org.apache.httpcomponents:httpcore:4.3.2'
-        build 'org.apache.httpcomponents:httpclient:4.3.2'
-        build 'org.apache.httpcomponents:httpmime:4.3.3'
+        runtime 'com.amazonaws:aws-java-sdk:1.10.0'
     }
     plugins {
-        runtime ':karman-aws:0.6.1'
-        runtime ':asset-pipeline:2.0.17'
+        runtime(':karman-aws:0.6.1') {
+            excludes 'com.amazonaws:aws-java-sdk'
+        }
+        runtime ':asset-pipeline:2.2.3'
         build(':release:3.0.1',
                 ':rest-client-builder:1.0.3',
                 ':coveralls:0.1.3') {

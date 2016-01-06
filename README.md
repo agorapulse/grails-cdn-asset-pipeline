@@ -23,6 +23,12 @@ Kudos to *David Estes* for [Asset Pipeline](http://grails.org/plugin/asset-pipel
 
 Note: for this initial release, only *S3* provider is supported.
 
+# Grails 2 only
+
+This plugin is built for Grails 2. It has not been migrated to Grails 3 since you can use Gradle plugins to do static assets deployment.
+
+Here is an article I wrote about it: [How to deploy a Grails 3 app to AWS Beanstalk and CloudFront CDN](https://medium.com/@benorama/how-to-deploy-grails-3-app-to-aws-elastic-beanstalk-with-gradle-and-travis-318d084c0f7d#.mr9prxgk7)
+
 # Installation
 
 Declare the plugin dependency in the BuildConfig.groovvy file, as shown here:
